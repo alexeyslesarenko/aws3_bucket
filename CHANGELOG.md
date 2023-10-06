@@ -4,6 +4,6 @@
 ## 0.0.4 Adding lower version config
 ## 0.0.4 Adding support for 2.2.3
 ## 0.0.7 removing unwanted files
-## 0.0.7 removing unsupported region
+## 0.0.8 removing unsupported region
 
 * TODO: Describe initial release.
