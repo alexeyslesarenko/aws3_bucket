@@ -38,7 +38,9 @@ public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
                 let fileName = arguments!["imageName"] as? String
                 let region = arguments!["region"] as? String
                 let subRegion = arguments!["subRegion"] as? String
-                let imageUploadFolder = arguments!["imageUploadFolder"] as? String
+                let imageUploadFolder = arguments!["imageUploadFolder"] as? String == nil 
+                        ? "" 
+                        : (arguments!["imageUploadFolder"] as? String)! + "/"
 
 
           let credentialsProvider = AWSStaticCredentialsProvider(accessKey: secretKey!, secretKey: secretId!)
@@ -46,38 +48,24 @@ public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
           let configuration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
           AWSServiceManager.default().defaultServiceConfiguration = configuration
               let contentTypeParam = arguments!["contentType"] as? String
-//
 
                 print("region" + region!)
-
                 print("subregion " + subRegion!)
-//                if(region != nil && subRegion != nil){
-//                    initRegions(region: region!, subRegion: subRegion!)
-//                }
-//
-//              let credentialsProvider = AWSCognitoCredentialsProvider(
-//                  regionType: region1,
-//                  identityPoolId: identity!)
-//              let configuration = AWSServiceConfiguration(
-//                  region: subRegion1,
-//                  credentialsProvider: credentialsProvider)
+
               AWSServiceManager.default().defaultServiceConfiguration = configuration
-//
-//
+
                 var imageAmazonUrl = false
                 let fileUrl = NSURL(fileURLWithPath: imagePath!)
-//
                 let uploadRequest = AWSS3TransferManagerUploadRequest()
                 uploadRequest?.bucket = bucket
-                uploadRequest?.key = imageUploadFolder! + "/" + fileName!
-//
-//
+                uploadRequest?.key = imageUploadFolder + fileName!
+
               var contentType = "image/jpeg"
               if(contentTypeParam != nil &&
                   contentTypeParam!.count > 0){
                   contentType = contentTypeParam!
               }
-//
+
               if(contentTypeParam == nil || contentTypeParam!.count == 0 &&  fileName!.contains(".")){
                              var index = fileName!.lastIndex(of: ".")
                              index = fileName!.index(index!, offsetBy: 1)
@@ -105,17 +93,13 @@ public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
 
                 uploadRequest?.body = fileUrl as URL
 
-                uploadRequest?.acl = .publicReadWrite
-
                 AWSS3TransferManager.default().upload(uploadRequest!).continueWith { (task) -> AnyObject? in
 
                     if let error = task.error {
                         print("❌ Upload failed (\(error))")
                     }
-//
-//
+
                     if task.result != nil  {
-//       return "https://"+BUCKET_NAME+"s3.amazonaws.com/"+key
                        imageAmazonUrl = true
                         print("✅ Upload successed (\(imageAmazonUrl))")
                     } else {
@@ -135,7 +119,9 @@ public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
          let fileName = arguments!["imageName"] as? String
          let region = arguments!["region"] as? String
          let subRegion = arguments!["subRegion"] as? String
-         let imageUploadFolder = arguments!["imageUploadFolder"] as? String
+         let imageUploadFolder = arguments!["imageUploadFolder"] as? String == nil 
+                    ? "" 
+                    : (arguments!["imageUploadFolder"] as? String)! + "/"
 
 
          if(region != nil && subRegion != nil){
@@ -152,7 +138,7 @@ public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
          let s3 = AWSS3.s3(forKey: "defaultKey")
          let deleteObjectRequest = AWSS3DeleteObjectRequest()
          deleteObjectRequest?.bucket = bucket // bucket name
-         deleteObjectRequest?.key =  imageUploadFolder! + "/" + fileName! // File name
+         deleteObjectRequest?.key =  imageUploadFolder + fileName! // File name
          s3.deleteObject(deleteObjectRequest!).continueWith { (task:AWSTask) -> AnyObject? in
              if let error = task.error {
                  print("Error occurred: \(error)")
